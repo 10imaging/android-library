@@ -24,16 +24,6 @@
 
 package com.owncloud.android.lib.common.operations;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import android.accounts.Account;
 import android.accounts.AccountsException;
 
@@ -47,6 +37,17 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.jackrabbit.webdav.DavException;
 import org.json.JSONException;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.net.ssl.SSLException;
 
@@ -113,7 +114,8 @@ public class RemoteOperationResult implements Serializable {
         INVALID_CHARACTER_DETECT_IN_SERVER,
         DELAYED_FOR_WIFI,
         DELAYED_FOR_CHARGING,
-        LOCAL_FILE_NOT_FOUND
+        LOCAL_FILE_NOT_FOUND,
+        MAINTENANCE_MODE
     }
 
     private boolean mSuccess = false;
@@ -161,10 +163,12 @@ public class RemoteOperationResult implements Serializable {
 			case HttpStatus.SC_FORBIDDEN:
 				mCode = ResultCode.FORBIDDEN;
                 break;
+            case HttpStatus.SC_SERVICE_UNAVAILABLE:
+                mCode = ResultCode.MAINTENANCE_MODE;
+                break;
             default:
                 mCode = ResultCode.UNHANDLED_HTTP_CODE;
-                Log_OC.d(TAG, "RemoteOperationResult has processed UNHANDLED_HTTP_CODE: " +
-                        httpCode);
+                Log_OC.d(TAG, "RemoteOperationResult has processed UNHANDLED_HTTP_CODE: " + httpCode);
             }
         }
     }
